@@ -58,3 +58,9 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
 });
+app.get("/test-order", async (req, res) => {
+  res.json({
+    message: "Server OK, next step payment order banayenge",
+    status: "success"
+  });
+});
