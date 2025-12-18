@@ -1,51 +1,37 @@
-const express = require("express");
-const Razorpay = require("razorpay");
+import express from "express";
+import Razorpay from "razorpay";
+import cors from "cors";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-// Razorpay instance (TEST keys Render ENV me lage honi chahiye)
+// Razorpay instance
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ✅ HOME ROUTE (server check)
+// test route
 app.get("/", (req, res) => {
-  res.send("Razorpay Payment API is running ✅");
+  res.send("Razorpay Backend Running ✅");
 });
 
-// ✅ TEST ROUTE (browser test)
-app.get("/test-order", (req, res) => {
-  res.json({
-    status: "success",
-    message: "Server OK, payment system ready",
-  });
-});
-
-// ✅ CREATE PAYMENT LINK (MAIN ROUTE)
+// CREATE PAYMENT LINK
 app.post("/create-payment-link", async (req, res) => {
   try {
     const { amount } = req.body;
 
     if (!amount) {
-      return res.status(400).json({
-        success: false,
-        error: "Amount is required",
-      });
+      return res.status(400).json({ success: false, message: "Amount required" });
     }
 
     const paymentLink = await razorpay.paymentLink.create({
-      amount: amount * 100, // rupees → paise
+      amount: amount * 100, // ₹ to paise
       currency: "INR",
       description: "Coupon Purchase",
-      customer: {
-        name: "Botpress User",
-      },
-      notify: {
-        sms: false,
-        email: false,
-      },
+      callback_url: "https://google.com",
+      callback_method: "get",
     });
 
     res.json({
@@ -53,15 +39,15 @@ app.post("/create-payment-link", async (req, res) => {
       payment_url: paymentLink.short_url,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
-      error: error.message,
+      message: "Payment link error",
     });
   }
 });
 
-// ✅ SERVER START
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
 });
