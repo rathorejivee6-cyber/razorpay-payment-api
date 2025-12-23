@@ -45,7 +45,7 @@ app.post("/create-payment-link", async (req, res) => {
         quantity: String(quantity || "1"),
         couponType: String(couponType || "default")
       },
-      callback_url: "https://google.com",
+      callback_url: "https://cdn.botpress.cloud/webchat/v3.5/shareable.html?configUrl=https://files.bpcontent.cloud/2025/12/10/10/20251210102013-CNS5TCH1.json",
       callback_method: "get",
     });
 
